@@ -1,0 +1,432 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "append_sheet?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "append_sheet?": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-18T09:16:57.452Z",
+  "id": "j2FnWZ7yCTQk0LJo",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "REGISTRO_CONTACTO",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/nubia-form",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "a7dab3dc-7b63-4cf8-9d6a-84e3f6850bf0",
+      "name": "Webhook",
+      "webhookId": "518b0cb0-fbc7-470c-bb16-b67ac23d7c24"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"values\": {\n    \"string\": [\n      {\n        \"name\": \"email\",\n        \"value\": \"={{ $json.body?.email || $json.fields?.email || $json.query?.email || '' }}\"\n      },\n      {\n        \"name\": \"name\",\n        \"value\": \"={{ $json.body?.name || $json.fields?.name || '' }}\"\n      },\n      {\n        \"name\": \"firstName\",\n        \"value\": \"={{ ($json.body?.name || '').trim().split(' ').slice(0,1).join(' ') }}\"\n      },\n      {\n        \"name\": \"lastName\",\n        \"value\": \"={{ ($json.body?.name || '').trim().split(' ').slice(1).join(' ') }}\"\n      },\n      {\n        \"name\": \"subject\",\n        \"value\": \"={{ $json.body?.subject || '' }}\"\n      },\n      {\n        \"name\": \"message\",\n        \"value\": \"={{ $json.body?.message || '' }}\"\n      },\n      {\n        \"name\": \"source\",\n        \"value\": \"={{ $json.body?.source || $json.headers?.referer || 'web:nubia.site' }}\"\n      },\n      {\n        \"name\": \"webhookUrl\",\n        \"value\": \"={{ $json.body?.webhookUrl || '' }}\"\n      },\n      {\n        \"name\": \"executionMode\",\n        \"value\": \"={{ $json.body?.executionMode || 'prod' }}\"\n      },\n      {\n        \"name\": \"userAgent\",\n        \"value\": \"={{ $json.headers?.['user-agent'] || '' }}\"\n      },\n      {\n        \"name\": \"origin\",\n        \"value\": \"={{ $json.headers?.origin || '' }}\"\n      },\n      {\n        \"name\": \"referer\",\n        \"value\": \"={{ $json.headers?.referer || '' }}\"\n      },\n      {\n        \"name\": \"ip\",\n        \"value\": \"={{ ($json.headers?.['x-forwarded-for'] || $json.ip || '').toString().split(',')[0].trim() }}\"\n      },\n      {\n        \"name\": \"forwardedHost\",\n        \"value\": \"={{ $json.headers?.['x-forwarded-host'] || '' }}\"\n      },\n      {\n        \"name\": \"forwardedProto\",\n        \"value\": \"={{ $json.headers?.['x-forwarded-proto'] || '' }}\"\n      },\n      {\n        \"name\": \"created_at\",\n        \"value\": \"={{ new Date().toISOString() }}\"\n      },\n      {\n        \"name\": \"uuid\",\n        \"value\": \"={{ (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36)+Math.random().toString(36).slice(2)) }}\"\n      }\n    ],\n    \"boolean\": [\n      {\n        \"name\": \"subscribe\",\n        \"value\": \"={{ ($json.body?.subscribe === true) || ($json.body?.subscribe === 'true') }}\"\n      }\n    ]\n  },\n  \"options\": {\n    \"keepOnlySet\": true\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -208
+      ],
+      "id": "a2473067-aa3c-4e8e-856f-23f56003b621",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analiza este payload y decide las acciones.\n\nINPUT:\n{{ JSON.stringify($json, null, 2) }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Eres el IA Agent de Nubia para registros de newsletter y contactos web.\n\nTareas:\n1) Validar datos (email obligatorio y formato correcto).\n2) Clasificar: \"newsletter\" | \"contact\" | \"support\" | \"spam\".\n3) Prioridad: \"low\" | \"normal\" | \"high\".\n4) Decidir acciones: [\"append_sheet\",\"send_welcome\",\"double_opt_in\",\"skip\",\"alert_owner\"].\n5) Generar 3–5 tags (temas breves).\n6) Normalizar nombre: firstName (1ª palabra) y lastName (resto).\n\nResponde **SOLO** con JSON **válido** y **nada más**, siguiendo exactamente este esquema:\n\n{\n  \"valid\": boolean,\n  \"reason\": string,\n  \"type\": \"newsletter\" | \"contact\" | \"support\" | \"spam\",\n  \"priority\": \"low\" | \"normal\" | \"high\",\n  \"actions\": string[],\n  \"tags\": string[],\n  \"normalized\": {\n    \"email\": string,\n    \"firstName\": string,\n    \"lastName\": string,\n    \"fullName\": string,\n    \"subject\": string,\n    \"message\": string\n  }\n}\n\nPolíticas:\n- Si subscribe==true y mensaje corto ⇒ type=\"newsletter\", actions=[\"append_sheet\",\"send_welcome\"].\n- Si la ley/GDPR requiere confirmación ⇒ usa \"double_opt_in\" en lugar de \"send_welcome\".\n- Si parece spam ⇒ type=\"spam\", actions=[\"skip\"].\n- No inventes datos. Si falta algo, déjalo en \"\" y explica en \"reason\".\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -208
+      ],
+      "id": "5e96b78f-3b9a-45c0-9001-fb0740d4361a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "maxTokens": 1200
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        16
+      ],
+      "id": "2ee62376-3b00-43de-82b5-ea9d46b04127",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "G6QG75apbx44eWTZ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $json.output ?? $json;           // a veces viene en output\nif (typeof raw === 'string') {\n  try { raw = JSON.parse(raw); } catch (e) {\n    return [{ json: { error: 'Bad JSON from AI Agent', raw } }];\n  }\n}\nreturn [{ json: raw }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -208
+      ],
+      "id": "ecf310eb-877a-4aa7-8e79-29186055c909",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9028c1db-e42d-4f70-9fc5-e52f1d4b3d6c",
+              "leftValue": "={{ $json.actions.includes('append_sheet') }}",
+              "rightValue": {},
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        -208
+      ],
+      "id": "b3c48711-0b3b-4269-b9e7-1cb8e9010d20",
+      "name": "append_sheet?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8",
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.normalized.email }}",
+            "Nombre": "={{ $json.normalized.firstName }}",
+            "Apellidos": "={{ $json.normalized.lastName }}",
+            "Nombre completo": "={{ $json.normalized.fullName }}",
+            "Motivo": "={{ $json.normalized.subject }}",
+            "Mensaje": "={{ $json.normalized.message }}",
+            "Tipo": "={{ $json.type }}",
+            "Prioridad": "={{ $json.priority }}",
+            "tags": "={{ $json.tags }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Apellidos",
+              "displayName": "Apellidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre completo",
+              "displayName": "Nombre completo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Motivo",
+              "displayName": "Motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prioridad",
+              "displayName": "Prioridad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created at",
+              "displayName": "created at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1248,
+        -304
+      ],
+      "id": "04313eeb-4f82-4b14-9bf2-73e7a03e6cce",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7FbdcUfuiHeXeLF8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.normalized.email }}",
+        "subject": "¡Bienvenido/a a la newsletter de Nubia!",
+        "message": "=<p>Hola <b>{{ $json.normalized.firstName }}</b>,</p> <p>Gracias por unirte a la newsletter de <b>Nubia</b>.</p> <p>Pronto recibirás contenido sobre IA práctica, automatización y ciberseguridad.</p> <p>— Equipo Nubia</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1248,
+        -112
+      ],
+      "id": "c3b9c152-09a2-4bb3-943a-f9d778c43c1b",
+      "name": "Send a message",
+      "webhookId": "57f85700-6f02-4088-8bf9-fc5d336aefde",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Zh4mbcdj3DWiXuIb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ { ok: true, message: \"¡Gracias! Te hemos registrado.\" } }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1472,
+        -304
+      ],
+      "id": "c9b457ff-5270-4f15-915f-aea7b05c0aa7",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "TASQUITANDO",
+    "name": "n8n-backups-VPS"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-18T09:16:57.452Z",
+      "updatedAt": "2025-10-18T09:16:57.452Z",
+      "role": "workflow:owner",
+      "workflowId": "j2FnWZ7yCTQk0LJo",
+      "projectId": "kTZf8wDfcs9LWznK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-18T18:32:26.045Z",
+  "versionId": "952020f3-ef78-4b93-96f7-1f1f837e2471"
+}
