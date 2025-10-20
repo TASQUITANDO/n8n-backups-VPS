@@ -1,0 +1,516 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message client",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message andrea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-19T17:34:03.843Z",
+  "id": "hQndSQ3Vqq1b3nNj",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Recogida pedidos web",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "api/ilustra-contact",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -24
+      ],
+      "id": "32cdd918-c6fa-4beb-9d0f-d6405151ae31",
+      "name": "Webhook",
+      "webhookId": "0c86eb78-2c0b-4819-9a5c-2531dd117a88"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Espera: 1 item con json.body (pedido) y binary con keys photos_0, photos_1...\nconst item = items[0];\nconst { json, binary } = item;\n\nconst body = json.body || {};\nconst customerName = (body.name || body.customerName || \"cliente_sin_nombre\").toString().trim();\n\n// orderId seguro (sin \":\" / espacios)\nconst rawId = body.order_id || json.orderId || $now; // $now = ISO string\nconst orderId = rawId.toString().replace(/[^0-9A-Za-z_-]/g, \"_\");\n\nconst folderName = `${customerName.replace(/[^\\w\\- ]/g, \"_\")}__${orderId}`;\n\nconst out = [];\nif (binary) {\n  // aceptar photos, file, image...\n  const keys = Object.keys(binary).filter(k =>\n    k.startsWith('photos') || k.startsWith('file') || k.startsWith('image')\n  );\n\n  if (keys.length === 0) {\n    return [{\n      json: { ...json, folderName, orderId, hasPhotos: false }\n    }];\n  }\n\n  for (const k of keys) {\n    const b = binary[k]; // {data, fileName, mimeType, ...}\n    out.push({\n      json: {\n        ...json,                 // conserva json original (con headers/body si te interesa)\n        folderName,\n        orderId,\n        hasPhotos: true,\n        photoFilename: b.fileName || `${orderId}_${k}`,\n        photoMime: b.mimeType || 'application/octet-stream',\n      },\n      binary: {\n        photo: b                 // renombrado a 'photo' (clave que usaremos en Upload)\n      }\n    });\n  }\n} else {\n  return [{\n    json: { ...json, folderName, orderId, hasPhotos: false }\n  }];\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -24
+      ],
+      "id": "0ae77597-3d46-409c-8d97-6f3fe0f7de9c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.folderName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1LYneTRkWiJv38X28Ln2Cn4xMdeADE-ZN",
+          "mode": "list",
+          "cachedResultName": "ilustrat",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1LYneTRkWiJv38X28Ln2Cn4xMdeADE-ZN"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        400,
+        144
+      ],
+      "id": "7f7165ae-4302-41cc-8ebd-a87751bbd62a",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dHqkYicvy3pNdTe0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        -168
+      ],
+      "id": "e8e2d548-ad79-4677-92c0-4a938eb2a051",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "photo",
+        "name": "={{ $json.body.name }}- foto",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        848,
+        -168
+      ],
+      "id": "5d821823-0633-41ec-830c-6480faf2be00",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "dHqkYicvy3pNdTe0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8",
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GlXRRYBT6bkCKEpKeEnQ8i9K61W6iojbK1oWHN-ejY8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Merge').item.json.body.email }}",
+            "Nombre": "={{ $('Merge').item.json.body.name }}",
+            "Carpeta Creada": "={{ $json.name }}",
+            "Numero": "={{ $json.body.whatsapp }}",
+            "Estilo": "={{ $json.body.style }}",
+            "Tamaño": "={{ $json.body.size }}",
+            "Personas": "={{ $json.body.people }}",
+            "Mascotas": "={{ $json.body.pets }}",
+            "Fondo": "={{ $json.body.background }}",
+            "Notas": "={{ $json.body.notes }}",
+            "Terms accept": "={{ $json.body.termsAccepted }}",
+            "Precio Base": "={{ $json.body.pricing_base }}",
+            "Precio Total": "={{ $json.body.pricing_total }}",
+            "Precio Extra": "={{ $json.body.pricing_extras }}",
+            "Imágenes subidas": "={{ $json.photoFilename }}",
+            "Port Consent": "={{ $json.body.portfolioConsent }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Numero",
+              "displayName": "Numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Estilo",
+              "displayName": "Estilo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tamaño",
+              "displayName": "Tamaño",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Personas",
+              "displayName": "Personas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mascotas",
+              "displayName": "Mascotas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fondo",
+              "displayName": "Fondo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Terms accept",
+              "displayName": "Terms accept",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Port Consent",
+              "displayName": "Port Consent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Precio Base",
+              "displayName": "Precio Base",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Precio Extra",
+              "displayName": "Precio Extra",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Precio Total",
+              "displayName": "Precio Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Carpeta Creada",
+              "displayName": "Carpeta Creada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Imágenes subidas",
+              "displayName": "Imágenes subidas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        192
+      ],
+      "id": "95c13fa0-36d5-4685-889d-b22e18f10333",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7FbdcUfuiHeXeLF8",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1072,
+        -16
+      ],
+      "id": "8255ae93-8a80-4533-b6f2-b138bc4a88bd",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.body.email}}",
+        "subject": "=🎨 Tu pedido {{ $json.body.order_id }} ha sido recibido: imágenes guardadas correctamente",
+        "message": "=<!doctype html> <html>   <body style=\"font-family:Inter,Arial,sans-serif; line-height:1.5; color:#111;\">     <h2>¡Gracias, {{$json.body.name}}!</h2>     <p>Hemos recibido tu pedido y las imágenes se han guardado correctamente en nuestro sistema.</p>      <h3>Resumen del pedido</h3>     <table cellpadding=\"8\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse; background:#fafafa;\">       <tr><td><b>ID de pedido</b></td><td>{{$json.body.order_id}}</td></tr>       <tr><td><b>Nombre</b></td><td>{{$json.body.name}}</td></tr>       <tr><td><b>Email</b></td><td>{{$json.body.email}}</td></tr>       <tr><td><b>WhatsApp</b></td><td>{{$json.body.whatsapp}}</td></tr>       <tr><td><b>Estilo</b></td><td>{{$json.body.style}}</td></tr>       <tr><td><b>Tamaño</b></td><td>{{$json.body.size}}</td></tr>       <tr><td><b>Personas</b></td><td>{{$json.body.people}}</td></tr>       <tr><td><b>Mascotas</b></td><td>{{$json.body.pets}}</td></tr>       <tr><td><b>Fondo</b></td><td>{{$json.body.background}}</td></tr>       <tr><td><b>Notas</b></td><td>{{ $json.body.notes || '—' }}</td></tr>       <tr><td><b>Precio total</b></td><td>{{ $json.body.pricing_total }} €</td></tr>     </table>      <h3>Imágenes subidas</h3>     <ul>       <li><b>Archivo:</b> {{ $node[\"Upload file\"].json.name || $json.photoFilename }}</li>       <li><b>MIME:</b> {{ $node[\"Upload file\"].json.mimeType || $json.photoMime }}</li>       <li><b>Tamaño:</b> {{ $node[\"Upload file\"].json.size }} bytes</li>       <li><b>Resolución:</b>          {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}×         {{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px       </li>       <li><b>Subida:</b> {{ $node[\"Upload file\"].json.createdTime || $json.createdTime }}</li>     </ul>      <p>       Puedes previsualizar el archivo aquí:<br>       <a href=\"{{$node['Upload file'].json['webViewLink']}}\" target=\"_blank\">         Ver imagen en Google Drive       </a>     </p>      <p>       Carpeta asignada al pedido:<br>       <a href=\"{{ 'https://drive.google.com/drive/folders/' + $node['Create folder'].json['id'] }}\" target=\"_blank\">         {{ $json.folderName }}       </a>     </p>      <hr style=\"border:none; border-top:1px solid #eee; margin:24px 0;\" />      <p style=\"font-size:13px; color:#666;\">       Origen de la solicitud: {{ $json.body.source_url }}<br/>       Marca temporal: {{ $json.body.ts }}<br/>       User-Agent: {{ $json.body.userAgent }}     </p>      <p>Si ves algo incorrecto, responde a este correo y lo revisamos enseguida.</p>     <p>— Equipo Ilustra · NUBIA</p>   </body> </html>\n\n\nGracias, {{$json.body.name}}. Hemos recibido tu pedido {{$json.body.order_id}}.\nCarpeta: https://drive.google.com/drive/folders/{{$node[\"Create folder\"].json[\"id\"]}}\nImagen: {{$node[\"Upload file\"].json[\"webViewLink\"]}}\nArchivo: {{ $node[\"Upload file\"].json.name || $json.photoFilename }}\nTamaño: {{ $node[\"Upload file\"].json.size }} bytes\nResolución: {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}x{{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px\nPrecio total: {{ $json.body.pricing_total }} €",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        -192
+      ],
+      "id": "3dd22366-0359-43b4-a1b1-2ffd6b7fc46d",
+      "name": "Send a message client",
+      "webhookId": "64266086-de09-4b47-afb7-ba715250c3b2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Zh4mbcdj3DWiXuIb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.body.email}}",
+        "subject": "=[ILUSTRA] Pedido {{$json.body.order_id}} guardado · {{ $json.body.name }}",
+        "message": "=<!doctype html>\n<html>\n  <body style=\"font-family:Inter,Arial,sans-serif; line-height:1.6; color:#111;\">\n    <h2>Nuevo pedido recibido y guardado</h2>\n\n    <h3>Cliente</h3>\n    <ul>\n      <li><b>Nombre:</b> {{$json.body.name}}</li>\n      <li><b>Email:</b> {{$json.body.email}}</li>\n      <li><b>WhatsApp:</b> {{$json.body.whatsapp}}</li>\n    </ul>\n\n    <h3>Pedido</h3>\n    <ul>\n      <li><b>Order ID:</b> {{$json.body.order_id}}</li>\n      <li><b>Folder Name:</b> {{$json.folderName}}</li>\n      <li><b>Folder ID:</b> {{$node[\"Create folder\"].json[\"id\"]}}</li>\n      <li><b>Carpeta Drive:</b>\n        <a href=\"{{ 'https://drive.google.com/drive/folders/' + $node['Create folder'].json['id'] }}\" target=\"_blank\">\n          abrir\n        </a>\n      </li>\n      <li><b>Origen:</b> {{$json.body.source_url}}</li>\n      <li><b>TS:</b> {{$json.body.ts}}</li>\n      <li><b>UA:</b> {{$json.body.userAgent}}</li>\n    </ul>\n\n    <h3>Imagen subida</h3>\n    <ul>\n      <li><b>Nombre:</b> {{ $node[\"Upload file\"].json.name || $json.photoFilename }}</li>\n      <li><b>WebView:</b> <a href=\"{{$node['Upload file'].json['webViewLink']}}\" target=\"_blank\">ver</a></li>\n      <li><b>MIME:</b> {{ $node[\"Upload file\"].json.mimeType || $json.photoMime }}</li>\n      <li><b>Tamaño:</b> {{ $node[\"Upload file\"].json.size }} bytes</li>\n      <li><b>Dimensiones:</b>\n        {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}×\n        {{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px\n      </li>\n      <li><b>Checksums:</b>\n        md5={{$json.md5Checksum}} ·\n        sha1={{$json.sha1Checksum}} ·\n        sha256={{$json.sha256Checksum}}\n      </li>\n    </ul>\n\n    <h3>Condiciones & consentimiento</h3>\n    <ul>\n      <li>termsAccepted: {{$json.body.termsAccepted}}</li>\n      <li>portfolioConsent: {{$json.body.portfolioConsent}}</li>\n    </ul>\n\n    <h3>Precio</h3>\n    <ul>\n      <li>Base: {{$json.body.pricing_base}} €</li>\n      <li>Total: {{$json.body.pricing_total}} €</li>\n      <li>Extras (raw): {{$json.body.pricing_extras}}</li>\n    </ul>\n  </body>\n</html>\n\n\nGracias, {{$json.body.name}}. Hemos recibido tu pedido {{$json.body.order_id}}.\nCarpeta: https://drive.google.com/drive/folders/{{$node[\"Create folder\"].json[\"id\"]}}\nImagen: {{$node[\"Upload file\"].json[\"webViewLink\"]}}\nArchivo: {{ $node[\"Upload file\"].json.name || $json.photoFilename }}\nTamaño: {{ $node[\"Upload file\"].json.size }} bytes\nResolución: {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}x{{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px\nPrecio total: {{ $json.body.pricing_total }} €\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1296,
+        0
+      ],
+      "id": "813ec2f3-abd9-4cc9-8b92-1c8560ae9629",
+      "name": "Send a message andrea",
+      "webhookId": "64266086-de09-4b47-afb7-ba715250c3b2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Zh4mbcdj3DWiXuIb",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "TASQUITANDO",
+    "name": "n8n-backups-VPS"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-19T17:34:03.843Z",
+      "updatedAt": "2025-10-19T17:34:03.843Z",
+      "role": "workflow:owner",
+      "workflowId": "hQndSQ3Vqq1b3nNj",
+      "projectId": "kTZf8wDfcs9LWznK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-20T05:34:14.153Z",
+  "versionId": "84604fc2-5a6d-4989-a2d3-120a4605d1a3"
+}
