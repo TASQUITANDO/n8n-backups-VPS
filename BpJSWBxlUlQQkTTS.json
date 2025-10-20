@@ -575,8 +575,7 @@
         "rule": {
           "interval": [
             {
-              "field": "minutes",
-              "minutesInterval": 2
+              "triggerAtHour": 8
             }
           ]
         }
@@ -1088,22 +1087,6 @@
     },
     {
       "parameters": {
-        "content": "## Edit this node 👇",
-        "height": 80,
-        "width": 150,
-        "color": 4
-      },
-      "id": "99e64b8f-3446-4b74-8ce6-5eccd47d0aa7",
-      "name": "Sticky Note3",
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1056,
-        368
-      ],
-      "typeVersion": 1
-    },
-    {
-      "parameters": {
         "content": "## Main workflow loop",
         "height": 601,
         "width": 1831,
@@ -1180,6 +1163,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-10-19T06:08:41.494Z",
-  "versionId": "db776659-b2d2-4da4-9849-f6a16063c24d"
+  "updatedAt": "2025-10-19T06:16:42.229Z",
+  "versionId": "712510ce-8f76-46f3-811c-b51644b11f44"
 }
