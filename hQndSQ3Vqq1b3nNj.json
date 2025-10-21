@@ -29,6 +29,11 @@
             "node": "Merge1",
             "type": "main",
             "index": 2
+          },
+          {
+            "node": "Call 'Agente creativo'",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -91,6 +96,11 @@
           }
         ]
       ]
+    },
+    "Send a message client": {
+      "main": [
+        []
+      ]
     }
   },
   "createdAt": "2025-10-19T17:34:03.843Z",
@@ -111,7 +121,7 @@
       "typeVersion": 2.1,
       "position": [
         -48,
-        -24
+        144
       ],
       "id": "32cdd918-c6fa-4beb-9d0f-d6405151ae31",
       "name": "Webhook",
@@ -125,7 +135,7 @@
       "typeVersion": 2,
       "position": [
         176,
-        -24
+        144
       ],
       "id": "0ae77597-3d46-409c-8d97-6f3fe0f7de9c",
       "name": "Code in JavaScript"
@@ -173,7 +183,7 @@
       "typeVersion": 3.2,
       "position": [
         624,
-        -168
+        -192
       ],
       "id": "e8e2d548-ad79-4677-92c0-4a938eb2a051",
       "name": "Merge"
@@ -198,7 +208,7 @@
       "typeVersion": 3,
       "position": [
         848,
-        -168
+        -192
       ],
       "id": "5d821823-0633-41ec-830c-6480faf2be00",
       "name": "Upload file",
@@ -416,7 +426,7 @@
       "typeVersion": 4.7,
       "position": [
         1296,
-        192
+        264
       ],
       "id": "95c13fa0-36d5-4685-889d-b22e18f10333",
       "name": "Append row in sheet",
@@ -438,7 +448,7 @@
       "typeVersion": 3.2,
       "position": [
         1072,
-        -16
+        -40
       ],
       "id": "8255ae93-8a80-4533-b6f2-b138bc4a88bd",
       "name": "Merge1"
@@ -447,14 +457,16 @@
       "parameters": {
         "sendTo": "={{$json.body.email}}",
         "subject": "=🎨 Tu pedido {{ $json.body.order_id }} ha sido recibido: imágenes guardadas correctamente",
-        "message": "=<!doctype html> <html>   <body style=\"font-family:Inter,Arial,sans-serif; line-height:1.5; color:#111;\">     <h2>¡Gracias, {{$json.body.name}}!</h2>     <p>Hemos recibido tu pedido y las imágenes se han guardado correctamente en nuestro sistema.</p>      <h3>Resumen del pedido</h3>     <table cellpadding=\"8\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse; background:#fafafa;\">       <tr><td><b>ID de pedido</b></td><td>{{$json.body.order_id}}</td></tr>       <tr><td><b>Nombre</b></td><td>{{$json.body.name}}</td></tr>       <tr><td><b>Email</b></td><td>{{$json.body.email}}</td></tr>       <tr><td><b>WhatsApp</b></td><td>{{$json.body.whatsapp}}</td></tr>       <tr><td><b>Estilo</b></td><td>{{$json.body.style}}</td></tr>       <tr><td><b>Tamaño</b></td><td>{{$json.body.size}}</td></tr>       <tr><td><b>Personas</b></td><td>{{$json.body.people}}</td></tr>       <tr><td><b>Mascotas</b></td><td>{{$json.body.pets}}</td></tr>       <tr><td><b>Fondo</b></td><td>{{$json.body.background}}</td></tr>       <tr><td><b>Notas</b></td><td>{{ $json.body.notes || '—' }}</td></tr>       <tr><td><b>Precio total</b></td><td>{{ $json.body.pricing_total }} €</td></tr>     </table>      <h3>Imágenes subidas</h3>     <ul>       <li><b>Archivo:</b> {{ $node[\"Upload file\"].json.name || $json.photoFilename }}</li>       <li><b>MIME:</b> {{ $node[\"Upload file\"].json.mimeType || $json.photoMime }}</li>       <li><b>Tamaño:</b> {{ $node[\"Upload file\"].json.size }} bytes</li>       <li><b>Resolución:</b>          {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}×         {{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px       </li>       <li><b>Subida:</b> {{ $node[\"Upload file\"].json.createdTime || $json.createdTime }}</li>     </ul>      <p>       Puedes previsualizar el archivo aquí:<br>       <a href=\"{{$node['Upload file'].json['webViewLink']}}\" target=\"_blank\">         Ver imagen en Google Drive       </a>     </p>      <p>       Carpeta asignada al pedido:<br>       <a href=\"{{ 'https://drive.google.com/drive/folders/' + $node['Create folder'].json['id'] }}\" target=\"_blank\">         {{ $json.folderName }}       </a>     </p>      <hr style=\"border:none; border-top:1px solid #eee; margin:24px 0;\" />      <p style=\"font-size:13px; color:#666;\">       Origen de la solicitud: {{ $json.body.source_url }}<br/>       Marca temporal: {{ $json.body.ts }}<br/>       User-Agent: {{ $json.body.userAgent }}     </p>      <p>Si ves algo incorrecto, responde a este correo y lo revisamos enseguida.</p>     <p>— Equipo Ilustra · NUBIA</p>   </body> </html>\n\n\nGracias, {{$json.body.name}}. Hemos recibido tu pedido {{$json.body.order_id}}.\nCarpeta: https://drive.google.com/drive/folders/{{$node[\"Create folder\"].json[\"id\"]}}\nImagen: {{$node[\"Upload file\"].json[\"webViewLink\"]}}\nArchivo: {{ $node[\"Upload file\"].json.name || $json.photoFilename }}\nTamaño: {{ $node[\"Upload file\"].json.size }} bytes\nResolución: {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }}x{{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px\nPrecio total: {{ $json.body.pricing_total }} €",
-        "options": {}
+        "message": "=<!doctype html>\n<html>\n  <body style=\"margin:0;padding:0;background:#f6f7fb;\">\n    <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"background:#f6f7fb;\">\n      <tr>\n        <td align=\"center\" style=\"padding:32px 16px;\">\n          <!-- Container -->\n          <table role=\"presentation\" width=\"680\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"width:680px;max-width:100%;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eaeaea;\">\n            <!-- Header -->\n            <tr>\n              <td style=\"background:#111827;color:#fff;padding:24px 28px;\">\n                <table width=\"100%\" style=\"border-collapse:collapse;\">\n                  <tr>\n                    <td style=\"font-family:Inter,Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:.2px;\">\n                      NUBIA · Ilustra\n                    </td>\n                    <td align=\"right\" style=\"font-family:Inter,Arial,sans-serif;font-size:12px;opacity:.85;\">\n                      Pedido: <b>{{$json.body.order_id}}</b>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Greeting -->\n            <tr>\n              <td style=\"padding:24px 28px 8px 28px;font-family:Inter,Arial,sans-serif;color:#111;\">\n                <h2 style=\"margin:0 0 8px 0;font-size:22px;line-height:1.3;\">¡Gracias, {{$json.body.name}}!</h2>\n                <p style=\"margin:0;color:#374151;font-size:14px;\">\n                  Hemos recibido tu pedido y <b>las imágenes se han guardado correctamente</b> en nuestro sistema.\n                </p>\n              </td>\n            </tr>\n\n            <!-- Summary Cards -->\n            <tr>\n              <td style=\"padding:8px 28px 4px 28px;\">\n                <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"border-collapse:collapse;\">\n                  <tr>\n                    <td valign=\"top\" style=\"width:50%;padding:12px;border:1px solid #eee;border-radius:10px;background:#fafafa;font-family:Inter,Arial,sans-serif;\">\n                      <div style=\"font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;\">Datos de contacto</div>\n                      <div style=\"font-size:14px;color:#111;\">\n                        <div><b>Nombre:</b> {{$json.body.name}}</div>\n                        <div><b>Email:</b> {{$json.body.email}}</div>\n                        <div><b>WhatsApp:</b> {{$json.body.whatsapp}}</div>\n                      </div>\n                    </td>\n                    <td width=\"16\"></td>\n                    <td valign=\"top\" style=\"width:50%;padding:12px;border:1px solid #eee;border-radius:10px;background:#fafafa;font-family:Inter,Arial,sans-serif;\">\n                      <div style=\"font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;\">Especificaciones</div>\n                      <div style=\"font-size:14px;color:#111;\">\n                        <div><b>Estilo:</b> {{$json.body.style}}</div>\n                        <div><b>Tamaño:</b> {{$json.body.size}}</div>\n                        <div><b>Personas/Mascotas:</b> {{$json.body.people}} / {{$json.body.pets}}</div>\n                        <div><b>Fondo:</b> {{$json.body.background}}</div>\n                      </div>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- Notes & Price -->\n            <tr>\n              <td style=\"padding:8px 28px;\">\n                <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"border-collapse:collapse;\">\n                  <tr>\n                    <td valign=\"top\" style=\"padding:12px;border:1px dashed #e5e7eb;border-radius:10px;background:#fcfcfd;font-family:Inter,Arial,sans-serif;\">\n                      <div style=\"font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;\">Notas</div>\n                      <div style=\"font-size:14px;color:#111;\">\n                        {{ $json.body.notes || '—' }}\n                      </div>\n                    </td>\n                    <td width=\"16\"></td>\n                    <td valign=\"top\" style=\"padding:12px;border:1px solid #eee;border-radius:10px;background:#fafafa;font-family:Inter,Arial,sans-serif;\">\n                      <div style=\"font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;\">Precio</div>\n                      <div style=\"font-size:14px;color:#111;\">\n                        <div><b>Total:</b> {{ $json.body.pricing_total }} €</div>\n                        <div style=\"color:#6b7280;font-size:12px;\">Base: {{$json.body.pricing_base}} € · Extras: {{$json.body.pricing_extras}}</div>\n                      </div>\n                    </td>\n                  </tr>\n                </table>\n              </td>\n            </tr>\n\n            <!-- File card -->\n            <tr>\n              <td style=\"padding:8px 28px 0 28px;\">\n                <div style=\"border:1px solid #eaeaea;border-radius:12px;overflow:hidden;\">\n                  <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"border-collapse:collapse;\">\n                    <tr>\n                      <td width=\"160\" align=\"center\" valign=\"middle\" style=\"background:#f9fafb;\">\n                        <img src=\"{{ $node['Upload file'].json.thumbnailLink || 'https://drive-thirdparty.googleusercontent.com/16/type/image/png' }}\" alt=\"Thumbnail\" width=\"160\" style=\"display:block;width:160px;max-width:160px;height:auto;border:0;\">\n                      </td>\n                      <td style=\"padding:16px 18px;font-family:Inter,Arial,sans-serif;\">\n                        <div style=\"font-size:14px;color:#111;\"><b>{{ $node[\"Upload file\"].json.name || $json.photoFilename }}</b></div>\n                        <div style=\"font-size:12px;color:#6b7280;\">\n                          {{ $node[\"Upload file\"].json.mimeType || $json.photoMime }} · {{ $node[\"Upload file\"].json.size }} bytes\n                        </div>\n                        <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">\n                          Resolución: \n                          {{ $node[\"Upload file\"].json.imageMediaMetadata?.width || $json.imageMediaMetadata?.width }} ×\n                          {{ $node[\"Upload file\"].json.imageMediaMetadata?.height || $json.imageMediaMetadata?.height }} px\n                        </div>\n                        <div style=\"font-size:12px;color:#6b7280;margin-top:4px;\">\n                          Subida: {{ $node[\"Upload file\"].json.createdTime || $json.createdTime }}\n                        </div>\n\n                        <!-- CTAs -->\n                        <div style=\"margin-top:12px;\">\n                          <a href=\"{{$node['Upload file'].json['webViewLink']}}\" target=\"_blank\" \n                             style=\"display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;\">\n                            Ver imagen\n                          </a>\n                          <span style=\"display:inline-block;width:8px;\"></span>\n                          <a href=\"{{ 'https://drive.google.com/drive/folders/' + $node['Create folder'].json['id'] }}\" target=\"_blank\" \n                             style=\"display:inline-block;background:#e5e7eb;color:#111827;text-decoration:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;\">\n                            Abrir carpeta del pedido\n                          </a>\n                        </div>\n                      </td>\n                    </tr>\n                  </table>\n                </div>\n              </td>\n            </tr>\n\n            <!-- Meta -->\n            <tr>\n              <td style=\"padding:18px 28px 6px 28px;\">\n                <div style=\"font-family:Inter,Arial,sans-serif;font-size:12px;color:#6b7280;\">\n                  Origen: {{ $json.body.source_url }} · TS: {{ $json.body.ts }} · UA: {{ $json.body.userAgent }}\n                </div>\n              </td>\n            </tr>\n\n            <!-- Footer -->\n            <tr>\n              <td style=\"padding:8px 28px 24px 28px;\">\n                <div style=\"font-family:Inter,Arial,sans-serif;font-size:13px;color:#111;margin-bottom:8px;\">\n                  Si ves algo incorrecto, responde a este correo y lo revisamos enseguida.\n                </div>\n                <div style=\"font-family:Inter,Arial,sans-serif;font-size:12px;color:#6b7280;\">\n                  — Equipo Ilustra · NUBIA\n                </div>\n                <div style=\"height:12px;\"></div>\n                <div style=\"font-family:Inter,Arial,sans-serif;font-size:11px;color:#9ca3af;line-height:1.4;\">\n                  Este mensaje confirma la recepción de tu pedido. Si has dado consentimiento (<i>portfolioConsent</i>={{$json.body.portfolioConsent}}),\n                  podremos mostrar tu obra final en nuestro portfolio. Puedes retirar tu consentimiento respondiendo a este email.\n                </div>\n              </td>\n            </tr>\n\n          </table>\n          <!-- /Container -->\n        </td>\n      </tr>\n    </table>\n  </body>\n</html>\n",
+        "options": {
+          "appendAttribution": false
+        }
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
         1296,
-        -192
+        -120
       ],
       "id": "3dd22366-0359-43b4-a1b1-2ffd6b7fc46d",
       "name": "Send a message client",
@@ -477,7 +489,7 @@
       "typeVersion": 2.1,
       "position": [
         1296,
-        0
+        72
       ],
       "id": "813ec2f3-abd9-4cc9-8b92-1c8560ae9629",
       "name": "Send a message andrea",
@@ -488,6 +500,179 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BCws2UeQNEVkJxQR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BCws2UeQNEVkJxQR",
+          "cachedResultName": "Agente creativo"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.body.name }}",
+            "email": "={{ $json.body.email }}",
+            "whatsapp": "={{ $json.body.whatsapp }}",
+            "style": "={{ $json.body.style }}",
+            "size": "={{ $json.body.size }}",
+            "people": "={{ $json.body.people }}",
+            "pets": "={{ $json.body.pets }}",
+            "background": "={{ $json.body.background }}",
+            "notes": "={{ $json.body.notes }}",
+            "source_url": "={{ $json.body.source_url }}",
+            "ts": "={{ $json.body.ts }}",
+            "folderId": "={{ $json.orderId }}",
+            "imageLinks": "={{ $json.photoFilename }}",
+            "id": "={{ $json.body.order_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "whatsapp",
+              "displayName": "whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "style",
+              "displayName": "style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "size",
+              "displayName": "size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "people",
+              "displayName": "people",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "pets",
+              "displayName": "pets",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "background",
+              "displayName": "background",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "source_url",
+              "displayName": "source_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ts",
+              "displayName": "ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "folderId",
+              "displayName": "folderId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imageLinks",
+              "displayName": "imageLinks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        336
+      ],
+      "id": "bfd02552-e97a-4f2a-92e0-d4e4553c79b7",
+      "name": "Call 'Agente creativo'",
+      "disabled": true
     }
   ],
   "origin": "n8n",
@@ -511,6 +696,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-10-20T05:34:14.153Z",
-  "versionId": "84604fc2-5a6d-4989-a2d3-120a4605d1a3"
+  "updatedAt": "2025-10-20T20:29:59.491Z",
+  "versionId": "07c869ce-4e4a-41ea-9872-d95bd87a5085"
 }
