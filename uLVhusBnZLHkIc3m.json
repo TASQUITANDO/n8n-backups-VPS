@@ -1,0 +1,115 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-10-20T09:30:58.841Z",
+  "id": "uLVhusBnZLHkIc3m",
+  "isArchived": false,
+  "meta": null,
+  "name": "explicacion http request",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://reqres.in/api/users?page=2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "reqres-free-v1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -464
+      ],
+      "id": "68a386a5-67b5-4746-9030-514142e59394",
+      "name": "GET USERS"
+    },
+    {
+      "parameters": {
+        "content": "## HTTP REQUEST (GET USERS)\n\nNombre: **GET Users**\nMétodo: **GET**\nURL: https://reqres.in/api/users?page=2\n\n🔹 Explicación:\n\nEsto pide al servidor: “Dame la página 2 de usuarios”.\n\nLos parámetros (?page=2) son los query parameters.\nNecesita el header **x-api-key**: reqres-free-v1 para activar la autentificación.",
+        "height": 288,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -512
+      ],
+      "typeVersion": 1,
+      "id": "88680707-ce60-4eb1-abb8-a6fd462847ca",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://reqres.in/api/users",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "reqres-free-v1"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"Tasqui\",\n  \"job\": \"IA Developer\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -64
+      ],
+      "id": "fa8a9731-34cb-4fa2-9802-16d835ae8808",
+      "name": "POST CREATE USER"
+    },
+    {
+      "parameters": {
+        "content": "## HTTP REQUEST (POST CREATE USER)\nNombre: POST Create User\nMétodo: POST\nURL: https://reqres.in/api/users\n\nEn **Body Parameters**:\n{\n  \"name\": \"Tasqui\",\n  \"job\": \"IA Developer\"\n}\n\n\nContent-Type: **application/json**\n\n🔹 Explicación:\n\nEnvías datos al servidor (como un formulario o JSON).\n\nEsto crea un nuevo usuario.\nNecesita el header **x-api-key**: reqres-free-v1 para activar la autentificación.",
+        "height": 416,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "05b8bd26-c5de-45a2-ab09-a50e62fb0e15",
+      "name": "Sticky Note1"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "TASQUITANDO",
+    "name": "n8n-backups-VPS"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-20T09:30:58.841Z",
+      "updatedAt": "2025-10-20T09:30:58.841Z",
+      "role": "workflow:owner",
+      "workflowId": "uLVhusBnZLHkIc3m",
+      "projectId": "kTZf8wDfcs9LWznK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-20T10:35:55.781Z",
+  "versionId": "7e791a41-d799-41b4-8a81-0948151e9d93"
+}
