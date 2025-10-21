@@ -1,0 +1,78 @@
+{
+  "active": false,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-20T10:37:23.658Z",
+  "id": "SA28TKNmFy6c7S5q",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "219bdfc7-05b7-4014-ada4-53b07113b74b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"handles\": [\n    \"la_inteligencia_artificial\",   // Jon\n    \"DotCSV\",\n    \"matthew_berman\",\n    \"YannicKilcher\"\n  ],\n  \"channelIds\": [\n    \"UCUrYBZGlEOSD1_ds_HcNd6A\",     // Xataka (ya ID directo)\n    \"UCbfYPyITQ-7l4upoX8nvctg\"      // Two Minute Papers\n  ],\n  \"keywords\": [\"AI\",\"LLM\",\"OpenAI\",\"NVIDIA\",\"Anthropic\"]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "01682768-144f-43e2-9d87-bcc2019fb334",
+      "name": "Edit Fields"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "TASQUITANDO",
+    "name": "n8n-backups-VPS"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-20T10:37:23.658Z",
+      "updatedAt": "2025-10-20T10:37:23.658Z",
+      "role": "workflow:owner",
+      "workflowId": "SA28TKNmFy6c7S5q",
+      "projectId": "kTZf8wDfcs9LWznK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-20T10:37:23.658Z",
+  "versionId": "2821f693-535c-48d8-98cc-d210c0676509"
+}
