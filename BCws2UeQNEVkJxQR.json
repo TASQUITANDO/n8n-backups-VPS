@@ -1,0 +1,136 @@
+{
+  "active": false,
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-20T06:23:09.327Z",
+  "id": "BCws2UeQNEVkJxQR",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "WF_Boceto_Gemini (NanoBanana)",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"id\": \"ord_123\",\n  \"name\": \"Nombre Apellido\",\n  \"email\": \"cliente@dominio.com\",\n  \"whatsapp\": \"+34 600000000\",\n  \"style\": \"acuarela_digital\",\n  \"size\": \"A4\",\n  \"people\": \"1\",\n  \"pets\": \"0\",\n  \"background\": \"sencillo\",\n  \"notes\": \"\",\n  \"source_url\": \"https://tusitio.com/\",\n  \"ts\": \"2025-10-20T10:00:00Z\",\n  \"folderId\": \"1AbCdEfGhIj\",\n  \"imageLinks\": \"Diseño sin título (2).png\"\n  \n}\n"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        -16
+      ],
+      "id": "20e4dfa8-8755-497f-a65f-48c17eda1dcf",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Eres un generador de ilustraciones digitales con estilo acuarela y tinta,\nespecializado en retratos artísticos de personas y mascotas.\n\nTu tarea es generar una descripción optimizada para un modelo de imagen,\nusando la información recibida del cliente.\n\n### DATOS DEL PEDIDO\n- ID del pedido: {{$json.id}}\n- Nombre del cliente: {{$json.name}}\n- Estilo solicitado: {{$json.style}}\n- Tamaño: {{$json.size}}\n- Número de personas: {{$json.people}}\n- Número de mascotas: {{$json.pets}}\n- Fondo: {{$json.background}}\n- Notas adicionales: {{$json.notes || \"Sin notas\"}}\n- Fuente del pedido: {{$json.source_url}}\n- Fecha y hora: {{$json.ts}}\n\n### IMAGEN DE REFERENCIA\nEl cliente ha adjuntado una fotografía base (ver archivo `{{$json.imageLinks}}`).\n\n### INSTRUCCIONES PARA GENERAR EL PROMPT FINAL\n1. Describe cómo debe transformarse la fotografía en una ilustración artística.\n2. Adapta el resultado al estilo indicado ({{$json.style}}) y al fondo ({{$json.background}}).\n3. Especifica el formato y requisitos técnicos:\n   - Resolución mínima: 4K (3840x2160 píxeles)\n   - Salida: PNG con fondo transparente\n   - Nivel de detalle alto\n4. Evita instrucciones redundantes o interpretaciones fuera de contexto.\n5. Devuelve el **prompt final listo para un generador de imágenes (p. ej., SDXL o LeonardoAI)**.\n\nDevuelve SOLO el texto optimizado del prompt, sin explicaciones adicionales.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bca16cce-609a-4a2f-9f36-c70fae27c312",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        240
+      ],
+      "id": "7446c406-d5f6-4fc5-ab7a-f3bedf305ac6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "G6QG75apbx44eWTZ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        208
+      ],
+      "id": "20a68978-0613-4ac8-80de-142ade911721",
+      "name": "HTTP Request"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "TASQUITANDO",
+    "name": "n8n-backups-VPS"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-20T06:23:09.327Z",
+      "updatedAt": "2025-10-20T06:23:09.327Z",
+      "role": "workflow:owner",
+      "workflowId": "BCws2UeQNEVkJxQR",
+      "projectId": "kTZf8wDfcs9LWznK"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-20T09:18:37.408Z",
+  "versionId": "14edc5ba-3db7-4d63-abd9-a263b716b2df"
+}
