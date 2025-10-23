@@ -103,7 +103,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [
-        368,
+        432,
         208
       ],
       "id": "20a68978-0613-4ac8-80de-142ade911721",
@@ -131,6 +131,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-10-20T09:18:37.408Z",
-  "versionId": "14edc5ba-3db7-4d63-abd9-a263b716b2df"
+  "updatedAt": "2025-10-22T08:36:48.677Z",
+  "versionId": "47fa957e-533e-4ac7-87d3-9a29e3972d03"
 }
